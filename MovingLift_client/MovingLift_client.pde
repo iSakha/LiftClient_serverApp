@@ -7,6 +7,21 @@ Button btnDOWN_1, btnDOWN_2, btnDOWN_3;
 Button[] btnUP = {btnUP_1, btnUP_2, btnUP_3};
 Button[] btnDOWN = {btnDOWN_1, btnDOWN_2, btnDOWN_3};
 Button btnStart;
+Button btnSave;
+
+Button pos_0, pos_0_L1, pos_0_L2, pos_0_L3;
+Button pos_1, pos_1_L1, pos_1_L2, pos_1_L3;
+Button pos_2, pos_2_L1, pos_2_L2, pos_2_L3;
+Button pos_3, pos_3_L1, pos_3_L2, pos_3_L3;
+Button pos_4, pos_4_L1, pos_4_L2, pos_4_L3;
+Button pos_5, pos_5_L1, pos_5_L2, pos_5_L3;
+
+Button[][] pos = {  {pos_0_L1, pos_0_L2, pos_0_L3}, 
+                    {pos_1_L1, pos_1_L2, pos_1_L3}, 
+                    {pos_2_L1, pos_2_L2, pos_2_L3}, 
+                    {pos_3_L1, pos_3_L2, pos_3_L3}, 
+                    {pos_4_L1, pos_4_L2, pos_4_L3}, 
+                    {pos_5_L1, pos_5_L2, pos_5_L3}  };
 
 String commandString = "";
 String position = "";
@@ -30,7 +45,16 @@ void setup() {
   btnDOWN[0] = btnDOWN_1;
   btnDOWN[1] = btnDOWN_2;
   btnDOWN[2] = btnDOWN_3;
+  
   btnStart = new Button(20, 180, 360, 40, 6, "Start", 255, 113, 100);
+  btnSave = new Button(20, 360, 360, 30, 6, "Save", 100, 255, 125);
+
+pos_0 = new Button(20, 235, 60, 15, 5, "pos_0", 72, 4, 22);
+pos_1 = new Button(20, 255, 60, 15, 5, "pos_1", 255, 255, 125);
+pos_2 = new Button(20, 275, 60, 15, 5, "pos_2", 255, 255, 125);
+pos_3 = new Button(20, 295, 60, 15, 5, "pos_3", 255, 255, 125);
+pos_4 = new Button(20, 315, 60, 15, 5, "pos_4", 255, 255, 125);
+pos_5 = new Button(20, 335, 60, 15, 5, "pos_5", 255, 255, 125);
 
   com_L1 = "";
   com_L2 = "";
@@ -38,7 +62,7 @@ void setup() {
   liftCommands[0] = com_L1;
   liftCommands[1] = com_L2;
   liftCommands[2] = com_L3;
-  
+
   liftPos_1 = "0";
   liftPos_2 = "0";
   liftPos_3 = "0";
@@ -60,8 +84,20 @@ void draw() {
     btnUP[i].render();
     btnDOWN[i].render();
   }
+  textSize(12);
+
   btnStart.btnHighLightColor = btnStart.btnBackColor;
   btnStart.render();
+  btnSave.render();
+  textSize(10);
+
+  pos_0.render();
+
+  pos_1.render();
+  pos_2.render();
+  pos_3.render();
+  pos_4.render();
+  pos_5.render();
 
   for (int i = 0; i < 3; i++) {
     if (btnUP[i].btnPressed) {
@@ -90,22 +126,26 @@ void draw() {
       btnUP[i].btnHighLightColor = color(150);
     }
   }
-  
-      if (c.available() > 0) { 
+
+  if (c.available() > 0) { 
 
     String input = c.readString(); 
-    input = input.substring(0,input.indexOf("\n"));
+    input = input.substring(0, input.indexOf("\n"));
     position = input;
     decodePosition(position);
   }
-  //textAlign(LEFT);
-  //text(commandString, 20, 240);
-  
+
   textSize(16);
   text(liftPosition[0], 75, 100);
   text(liftPosition[1], 195, 100);
   text(liftPosition[2], 315, 100);
-
+  //==================================================
+  //==================================================
+  textSize(12);
+  text(str(mouseX),350,10);
+  text(str(mouseY),350,30);
+  //==================================================
+  //==================================================
 }
 void mousePressed() {
   //==================================================
@@ -136,7 +176,6 @@ void mousePressed() {
     commandString = liftCommands[0] + "," + liftCommands[1] + "," + liftCommands[2];
     c.write(commandString);
   }
-
 }
 //==================================================
 
@@ -152,5 +191,4 @@ void decodePosition(String _position) {
   for (int i = 0; i < 3; i++) {
     liftPosition[i] = pos[i];
   }
-  
 }
