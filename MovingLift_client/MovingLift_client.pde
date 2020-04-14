@@ -2,6 +2,11 @@ Button btnUP_1, btnUP_2, btnUP_3;
 Button btnDOWN_1, btnDOWN_2, btnDOWN_3;
 Button[] btnUP = {btnUP_1, btnUP_2, btnUP_3};
 Button[] btnDOWN = {btnDOWN_1, btnDOWN_2, btnDOWN_3};
+Button btnStart;
+
+String commandString = "";
+String com_L1, com_L2, com_L3;
+String[] liftCommands = {com_L1, com_L2, com_L3};
 
 void setup() {
 
@@ -18,6 +23,15 @@ void setup() {
   btnDOWN[0] = btnDOWN_1;
   btnDOWN[1] = btnDOWN_2;
   btnDOWN[2] = btnDOWN_3;
+  btnStart = new Button(20, 180, 360, 40, 6, "Start", 255, 113, 100);
+  
+  com_L1 = "";
+  com_L2 = "";
+  com_L3 = "";
+  liftCommands[0] = com_L1;
+  liftCommands[1] = com_L1;
+  liftCommands[2] = com_L1;
+  
 }
 
 void draw() {
@@ -31,14 +45,14 @@ void draw() {
     btnUP[i].render();
     btnDOWN[i].render();
   }
+  btnStart.btnHighLightColor = btnStart.btnBackColor;
+  btnStart.render();
 
   for (int i = 0; i < 3; i++) {
     if (btnUP[i].btnPressed) {
       btnUP[i].btnBackColor = color(255, 255, 0);
       btnUP[i].btnHighLightColor = color(255, 255, 0);
-
-    } 
-    else {
+    } else {
       btnUP[i].btnBackColor = color(255, 219, 196);
       btnUP[i].btnHighLightColor = color(196, 255, 219);
     }
@@ -46,37 +60,58 @@ void draw() {
     if (btnDOWN[i].btnPressed) {
       btnDOWN[i].btnBackColor = color(255, 255, 0);
       btnDOWN[i].btnHighLightColor = color(255, 255, 0);
-
-    } 
-    else {
+    } else {
       btnDOWN[i].btnBackColor = color(255, 219, 196);
-      btnDOWN[i].btnHighLightColor = color(196,255,219);
+      btnDOWN[i].btnHighLightColor = color(196, 255, 219);
     }
-  
-    if(btnUP[i].btnPressed) {
+
+    if (btnUP[i].btnPressed) {
       btnDOWN[i].btnBackColor = color(150);
       btnDOWN[i].btnHighLightColor = color(150);
     }
-    
-        if(btnDOWN[i].btnPressed) {
+
+    if (btnDOWN[i].btnPressed) {
       btnUP[i].btnBackColor = color(150);
       btnUP[i].btnHighLightColor = color(150);
     }
   }
+  textAlign(LEFT);
+  text(commandString, 20, 240);
 }
 void mousePressed() {
+  //==================================================
   for (int i = 0; i< 3; i++) {
     if (btnUP[i].mouseOverBtn()) {
       btnUP[i].btnPressed = !btnUP[i].btnPressed;
-      if(btnUP[i].btnPressed) {
+      if (btnUP[i].btnPressed) {
         btnDOWN[i].btnPressed = false;
+        liftCommands[i] = "L" + (i + 1) + "_" + "UP";
       }
     }
+    //==================================================
     if (btnDOWN[i].mouseOverBtn()) {
       btnDOWN[i].btnPressed = !btnDOWN[i].btnPressed;
-      if(btnDOWN[i].btnPressed) {
+      if (btnDOWN[i].btnPressed) {
         btnUP[i].btnPressed = false;
+        liftCommands[i] = "L" + (i + 1) + "_" + "DOWN";
       }
     }
+    if(!btnUP[i].btnPressed && !btnDOWN[i].btnPressed) {
+      liftCommands[i] = "L" + (i + 1) + "_" + "STOP";
+    }
+  }
+  //==================================================
+
+  if (btnStart.mouseOverBtn()) {
+    btnStart.btnBackColor = color(100, 255, 113);
+    commandString = liftCommands[0] + "," + liftCommands[1] + "," + liftCommands[2];
+  }
+}
+//==================================================
+
+void mouseReleased() {
+  if (btnStart.mouseOverBtn()) {
+    btnStart.btnBackColor = color(255, 113, 100);
+    commandString = "L1_STOP,L2_STOP,L3_STOP";
   }
 }
