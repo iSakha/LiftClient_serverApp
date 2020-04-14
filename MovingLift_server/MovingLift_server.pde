@@ -9,7 +9,7 @@ Lift[] lift = {lift_0, lift_1, lift_2};
 int stageLevel;
 color stageColor = color(72, 4, 22);
 String commandString;
-
+String sendPosition = "";
 
 boolean[] commandUpState = {false, false, false};
 boolean[] commandDownState = {false, false, false};
@@ -51,10 +51,13 @@ void draw() {
     }
   }
   
+  sendPosition = lift[0].position() + " , " + lift[1].position() + " , " + lift[2].position() + "\n";
+  s.write(sendPosition);
+  println(sendPosition);
   c = s.available();
   if (c != null) { 
      String input = c.readString();
-      println(input);
+      //println(input);
       decodeCommand(input);
     }
     
@@ -85,15 +88,17 @@ void decodeCommand(String _commandString) {
 void keyPressed() {
 
   if (key == 'a') {
-    commandString = "L1_UP,L2_STOP,L3_UP";
+
   }
 
   if (key == 's') {
-    commandString = "L1_DOWN,L2_UP,L3_DOWN";
+    commandString = "L1_STOP,L2_UP,L3_STOP";
+    println(commandString);
   }
 
   if (key == 'd') {
     commandString = "L1_STOP,L2_STOP,L3_STOP";
+    println(commandString);
   }
   decodeCommand(commandString);
 }

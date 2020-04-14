@@ -41,6 +41,7 @@ boolean mouseOverBtn() {
     rect(Pos.x, Pos.y, btnWidth, btnHeight,btnCorners);
     
     fill(0);
+    textSize(12);
     textAlign(CENTER, CENTER);
     text(btnCaption, Pos.x + btnWidth/2, Pos.y + btnHeight/2);
   }

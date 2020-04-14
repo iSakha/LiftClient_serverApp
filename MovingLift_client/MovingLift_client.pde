@@ -9,12 +9,15 @@ Button[] btnDOWN = {btnDOWN_1, btnDOWN_2, btnDOWN_3};
 Button btnStart;
 
 String commandString = "";
+String position = "";
+String liftPos_1, liftPos_2, liftPos_3;
+String[] liftPosition = {liftPos_1, liftPos_2, liftPos_3};
 String com_L1, com_L2, com_L3;
 String[] liftCommands = {com_L1, com_L2, com_L3};
 
 void setup() {
 
-  size(640, 400); 
+  size(400, 400); 
   btnUP_1 = new Button(50, 60, 60, 20, 6, "UP", 255, 219, 196);
   btnUP_2 = new Button(170, 60, 60, 20, 6, "UP", 255, 219, 196);
   btnUP_3 = new Button(290, 60, 60, 20, 6, "UP", 255, 219, 196);
@@ -28,16 +31,22 @@ void setup() {
   btnDOWN[1] = btnDOWN_2;
   btnDOWN[2] = btnDOWN_3;
   btnStart = new Button(20, 180, 360, 40, 6, "Start", 255, 113, 100);
-  
+
   com_L1 = "";
   com_L2 = "";
   com_L3 = "";
   liftCommands[0] = com_L1;
-  liftCommands[1] = com_L1;
-  liftCommands[2] = com_L1;
+  liftCommands[1] = com_L2;
+  liftCommands[2] = com_L3;
   
+  liftPos_1 = "0";
+  liftPos_2 = "0";
+  liftPos_3 = "0";
+  liftPosition[0] = liftPos_1;
+  liftPosition[1] = liftPos_2;
+  liftPosition[2] = liftPos_3;
+
   c = new Client(this, "127.0.0.1", 12345);
-  
 }
 
 void draw() {
@@ -81,8 +90,22 @@ void draw() {
       btnUP[i].btnHighLightColor = color(150);
     }
   }
-  textAlign(LEFT);
-  text(commandString, 20, 240);
+  
+      if (c.available() > 0) { 
+
+    String input = c.readString(); 
+    input = input.substring(0,input.indexOf("\n"));
+    position = input;
+    decodePosition(position);
+  }
+  //textAlign(LEFT);
+  //text(commandString, 20, 240);
+  
+  textSize(16);
+  text(liftPosition[0], 75, 100);
+  text(liftPosition[1], 195, 100);
+  text(liftPosition[2], 315, 100);
+
 }
 void mousePressed() {
   //==================================================
@@ -102,7 +125,7 @@ void mousePressed() {
         liftCommands[i] = "L" + (i + 1) + "_" + "DOWN";
       }
     }
-    if(!btnUP[i].btnPressed && !btnDOWN[i].btnPressed) {
+    if (!btnUP[i].btnPressed && !btnDOWN[i].btnPressed) {
       liftCommands[i] = "L" + (i + 1) + "_" + "STOP";
     }
   }
@@ -113,6 +136,7 @@ void mousePressed() {
     commandString = liftCommands[0] + "," + liftCommands[1] + "," + liftCommands[2];
     c.write(commandString);
   }
+
 }
 //==================================================
 
@@ -122,4 +146,11 @@ void mouseReleased() {
     commandString = "L1_STOP,L2_STOP,L3_STOP";
     c.write(commandString);
   }
+}
+void decodePosition(String _position) {
+  String[] pos = splitTokens(_position, " , ");
+  for (int i = 0; i < 3; i++) {
+    liftPosition[i] = pos[i];
+  }
+  
 }

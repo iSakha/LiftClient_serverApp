@@ -25,7 +25,8 @@ class Lift {
 
   boolean stagePos;
   
-  String id;
+  String id, liftHeight;
+  
 
   //==================================================
 
@@ -59,6 +60,7 @@ class Lift {
     
       stageLevel = _y;
       id = _id;
+      liftHeight = "0";
   }
   //==================================================
   boolean isEven(int n) {
@@ -92,10 +94,11 @@ class Lift {
       fill(255);
     } else {fill(0);}
     
+    position();
     textSize(10);
     textAlign(CENTER, CENTER);
-    text(str(round(stageLevel - Pos.y)),Pos.x, Pos.y, lftWidth, lftHeight);
-    
+    text(liftHeight,Pos.x, Pos.y, lftWidth, lftHeight);
+
     
   }
 
@@ -150,4 +153,11 @@ class Lift {
       }
     }
   }
+  
+  String position() {
+
+    liftHeight = str(round(stageLevel - Pos.y));
+    return(liftHeight);
+  }
+  
 }
