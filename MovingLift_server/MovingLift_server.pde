@@ -1,3 +1,7 @@
+import processing.net.*;
+
+Server s; 
+Client c;
 
 Lift lift_0, lift_1, lift_2;
 Lift[] lift = {lift_0, lift_1, lift_2};
@@ -5,6 +9,7 @@ Lift[] lift = {lift_0, lift_1, lift_2};
 int stageLevel;
 color stageColor = color(72, 4, 22);
 String commandString;
+
 
 boolean[] commandUpState = {false, false, false};
 boolean[] commandDownState = {false, false, false};
@@ -19,6 +24,9 @@ void setup() {
   lift[0] = lift_0;
   lift[1] = lift_1;
   lift[2] = lift_2;
+  
+  s = new Server(this, 12345);  // Start a simple server on a port
+  
 }
 
 void draw() {
@@ -42,6 +50,14 @@ void draw() {
       lift[i].movingDown();
     }
   }
+  
+  c = s.available();
+  if (c != null) { 
+     String input = c.readString();
+      println(input);
+      decodeCommand(input);
+    }
+    
 }
 
 void decodeCommand(String _commandString) {

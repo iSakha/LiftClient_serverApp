@@ -1,3 +1,7 @@
+import processing.net.*;
+
+Client c;
+
 Button btnUP_1, btnUP_2, btnUP_3;
 Button btnDOWN_1, btnDOWN_2, btnDOWN_3;
 Button[] btnUP = {btnUP_1, btnUP_2, btnUP_3};
@@ -31,6 +35,8 @@ void setup() {
   liftCommands[0] = com_L1;
   liftCommands[1] = com_L1;
   liftCommands[2] = com_L1;
+  
+  c = new Client(this, "127.0.0.1", 12345);
   
 }
 
@@ -105,6 +111,7 @@ void mousePressed() {
   if (btnStart.mouseOverBtn()) {
     btnStart.btnBackColor = color(100, 255, 113);
     commandString = liftCommands[0] + "," + liftCommands[1] + "," + liftCommands[2];
+    c.write(commandString);
   }
 }
 //==================================================
@@ -113,5 +120,6 @@ void mouseReleased() {
   if (btnStart.mouseOverBtn()) {
     btnStart.btnBackColor = color(255, 113, 100);
     commandString = "L1_STOP,L2_STOP,L3_STOP";
+    c.write(commandString);
   }
 }
