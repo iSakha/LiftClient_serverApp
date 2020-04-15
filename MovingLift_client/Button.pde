@@ -6,7 +6,11 @@ class Button {
   float btnCorners = 0;
   color btnBackColor;
   color btnHighLightColor;
+  color textColor = 0;
+  int textSize = 12;
   String btnCaption;
+  color borderColor = 0;
+  int borderWeight = 1;
   boolean btnPressed = false;
   
   //==================================================
@@ -35,13 +39,15 @@ boolean mouseOverBtn() {
 }
   //================================================== 
     void render() {
+      strokeWeight(borderWeight);
+      stroke(borderColor);
       if (mouseX >= Pos.x && mouseX <= Pos.x + btnWidth && mouseY >= Pos.y && mouseY <= Pos.y + btnHeight) {
     fill(btnHighLightColor);
       } else {fill(btnBackColor);}
     rect(Pos.x, Pos.y, btnWidth, btnHeight,btnCorners);
     
-    fill(0);
-    //textSize(12);
+    fill(textColor);
+    textSize(textSize);
     textAlign(CENTER, CENTER);
     text(btnCaption, Pos.x + btnWidth/2, Pos.y + btnHeight/2);
   }
