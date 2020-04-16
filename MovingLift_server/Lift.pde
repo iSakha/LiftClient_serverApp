@@ -16,17 +16,17 @@ class Lift {
   float Lspring_Y2[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   float speed = 0.25;
- 
+
   color liftColor = color(160);
-  
+
   color baseColor = color(20);
 
   color springColor = color(18, 18, 135);
 
   boolean stagePos;
-  
+
   String id, liftHeight;
-  
+
 
   //==================================================
 
@@ -57,10 +57,10 @@ class Lift {
       Lspring_Y1[i] = Rspring_Y1[i];
       Lspring_Y2[i] = Rspring_Y2[i];
     }
-    
-      stageLevel = _y;
-      id = _id;
-      liftHeight = "0";
+
+    stageLevel = _y;
+    id = _id;
+    liftHeight = "0";
   }
   //==================================================
   boolean isEven(int n) {
@@ -72,10 +72,12 @@ class Lift {
   void render() {
 
     noStroke();
-    
+
     if (Pos.y == stageLevel) {
-    fill(stageColor);
-    } else {fill(liftColor);}
+      fill(stageColor);
+    } else {
+      fill(liftColor);
+    }
     rect(Pos.x, Pos.y, lftWidth, lftHeight);
     for (int i = 0; i <= 9; i++) {
       stroke(springColor);
@@ -86,25 +88,27 @@ class Lift {
     noStroke();
     fill(baseColor);
     rect(Pos.x, height - lftHeight, lftWidth, lftHeight);
-    
+
     textSize(12);
-    text("id " + id,Pos.x + 10,Pos.y - 10);
-    
+    text("id " + id, Pos.x + 10, Pos.y - 10);
+
     if (Pos.y == stageLevel) {
       fill(255);
-    } else {fill(0);}
-    
+    } else {
+      fill(0);
+    }
+
     position();
     textSize(10);
     textAlign(CENTER, CENTER);
-    text(liftHeight,Pos.x, Pos.y, lftWidth, lftHeight);
-
-    
+    text(liftHeight, Pos.x, Pos.y, lftWidth, lftHeight);
   }
 
   //================================================== 
 
   void movingUp() {
+    
+    liftColor = color(160);
     Pos.y = Pos.y - 5 * speed;
 
     for (int i = 0; i <= 9; i++) {
@@ -131,6 +135,7 @@ class Lift {
   //================================================== 
 
   void movingDown() {
+    liftColor = color(160);
     Pos.y = Pos.y + 5 * speed;
 
     for (int i = 0; i <= 9; i++) {
@@ -153,11 +158,26 @@ class Lift {
       }
     }
   }
-  
+
   String position() {
 
     liftHeight = str(round(stageLevel - Pos.y));
     return(liftHeight);
   }
-  
+
+  void goToPos(String _pos, int _numPos) {
+    int dir;
+    dir = round(stageLevel - Pos.y) - int(_pos);
+    if (dir > 0) {
+      movingDown();
+    }
+    if (dir < 0) {
+      movingUp();
+    }
+    if( dir == 0) {
+      liftColor = posColor[_numPos];
+      
+      //mode = "man";
+    }
+  }
 }

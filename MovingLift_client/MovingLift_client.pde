@@ -14,6 +14,7 @@ Button[] btnDOWN = new Button[] {btnDOWN_1, btnDOWN_2, btnDOWN_3};
 
 Button btnStart;
 Button btnSave;
+Button btnEdit;
 
 Button pos_0 = new Button(20, 235, 60, 15, 5, "Home", 72, 4, 22);
 Button pos_1 = new Button(20, 255, 60, 15, 5, "pos_1", 255, 255, 125);
@@ -51,7 +52,9 @@ Button[][] pos = new Button[][] {
   {pos_4, pos_4_L1, pos_4_L2, pos_4_L3}, 
   {pos_5, pos_5_L1, pos_5_L2, pos_5_L3}};
 
-int posCounter = 0;  
+int posCounter = 0;
+int currentPosIndex = 0;
+boolean editMode = false;
 
 String[][] posValue = new String[][] {
   {"0", "0", "0"}, 
@@ -74,18 +77,30 @@ String com_L1 = "";
 String com_L2 = "";
 String com_L3 = "";
 String[] liftCommands = {com_L1, com_L2, com_L3};
+String posNumAuto = "";
+
 
 void setup() {
 
   size(400, 400); 
 
   btnStart = new Button(20, 180, 360, 40, 6, "Start", 255, 113, 100);
+  btnStart.btnHighLightColor = btnStart.btnBackColor;
   btnSave = new Button(20, 360, 360, 30, 6, "Save", 100, 255, 125);
+  btnSave.btnHighLightColor = btnSave.btnBackColor;
+  btnEdit = new Button(340, 235, 40, 30, 6, "Edit", 252, 255, 183);
 
   c = new Client(this, "127.0.0.1", 12345);
+
+  for (int i = 0; i < 6; i++) {
+    for (int j = 0; j < 4; j ++) {
+      pos[i][j].btnHighLightColor = pos[i][j].btnBackColor;
+    }
+  }
 }
 
 void draw() {
+
   background(200);
   fill(219, 234, 255);
   rect(20, 40, 120, 120, 10);
@@ -95,10 +110,17 @@ void draw() {
   for (int i = 0; i< 3; i++) {
     btnUP[i].render();
     btnDOWN[i].render();
-  }
-  btnStart.btnHighLightColor = btnStart.btnBackColor;
+  }  
   btnStart.render();
   btnSave.render();
+  if (editMode) {
+    btnEdit.btnBackColor = color(255, 0, 0);
+  } else {
+    btnEdit.btnBackColor = color(252, 255, 183);
+  }
+  btnEdit.btnHighLightColor = btnEdit.btnBackColor;
+  btnEdit.render();
+
 
   for (int i = 0; i <= posCounter; i++) {
     for ( int j = 0; j < 4; j++) {
@@ -108,6 +130,7 @@ void draw() {
       if (j > 0) {
         pos[i][j].btnCaption = posValue[i][j -1];
       }
+      pos[i][j].borderWeight = 0;
       pos[i][j].render();
     }
   }
@@ -147,6 +170,7 @@ void draw() {
     position = input;
     decodePosition(position);
   }
+
   fill(0);
   textSize(16);
   text(liftPosition[0], 75, 100);
@@ -154,9 +178,9 @@ void draw() {
   text(liftPosition[2], 315, 100);
   //==================================================
   //==================================================
-  textSize(12);
-  text(str(mouseX), 350, 10);
-  text(str(mouseY), 350, 30);
+  //textSize(12);
+  //text(str(mouseX), 350, 10);
+  //text(str(mouseY), 350, 30);
   //==================================================
   //==================================================
 }
@@ -167,7 +191,8 @@ void mousePressed() {
       btnUP[i].btnPressed = !btnUP[i].btnPressed;
       if (btnUP[i].btnPressed) {
         btnDOWN[i].btnPressed = false;
-        liftCommands[i] = "L" + (i + 1) + "_" + "UP";
+
+        liftCommands[i] = "UP";
       }
     }
     //==================================================
@@ -175,18 +200,19 @@ void mousePressed() {
       btnDOWN[i].btnPressed = !btnDOWN[i].btnPressed;
       if (btnDOWN[i].btnPressed) {
         btnUP[i].btnPressed = false;
-        liftCommands[i] = "L" + (i + 1) + "_" + "DOWN";
+        liftCommands[i] = "DOWN";
       }
     }
+    //==================================================
     if (!btnUP[i].btnPressed && !btnDOWN[i].btnPressed) {
-      liftCommands[i] = "L" + (i + 1) + "_" + "STOP";
+      liftCommands[i] = "STOP";
     }
   }
   //==================================================
 
   if (btnStart.mouseOverBtn()) {
     btnStart.btnBackColor = color(100, 255, 113);
-    commandString = liftCommands[0] + "," + liftCommands[1] + "," + liftCommands[2];
+    commandString = liftCommands[0] + "," + liftCommands[1] + "," + liftCommands[2] + "," + "man";
     c.write(commandString);
   }
   //==================================================    
@@ -199,19 +225,60 @@ void mousePressed() {
       posValue[posCounter][i] = liftPosition[i];
     }
   }
+  //==================================================
+  if (btnEdit.mouseOverBtn()) {
+    editMode = !editMode;
+  }
+  //==================================================
+  for (int i = 0; i <= 5; i++) {
+    for ( int j = 0; j < 4; j++) {
+      if (pos[i][j].mouseOverBtn()) {
+        currentPosIndex = i;  
+        //println(pos[i][j].btnCaption);
+        goToPosCommand(i, j);
+        //println(commandString);
+      }
+    }
+  }
 }
 //==================================================
 
 void mouseReleased() {
   if (btnStart.mouseOverBtn()) {
     btnStart.btnBackColor = color(255, 113, 100);
-    commandString = "L1_STOP,L2_STOP,L3_STOP";
+    commandString = "STOP,STOP,STOP,man";
     c.write(commandString);
   }
 }
+//==================================================
 void decodePosition(String _position) {
   String[] pos = splitTokens(_position, " , ");
   for (int i = 0; i < 3; i++) {
     liftPosition[i] = pos[i];
+  }
+}
+//==================================================
+void goToPosCommand(int _i, int _j) {
+  resetUpDownButtons();
+  posNumAuto = str(_i);
+  if (_j == 0) {
+    for (int k = 0; k < 3; k++) {
+      liftCommands[k] = pos[_i][k + 1].btnCaption;
+    }
+
+    commandString = liftCommands[0] + "," + liftCommands[1] + "," + 
+      liftCommands[2] + "," + "auto" + "," + posNumAuto;
+    c.write(commandString);
+  } else {
+    liftCommands[_j - 1] = _j - 1 + "," + pos[_i][_j].btnCaption + "," + 
+      "placeholder" + "," + "single" + "," + posNumAuto;
+    c.write(liftCommands[_j - 1]);
+  }
+}
+//==================================================
+void resetUpDownButtons() {
+  for (int i = 0; i < 3; i++) {
+    btnUP[i].btnPressed = false;
+    btnDOWN[i].btnPressed = false;
   }
 }
